@@ -4,7 +4,6 @@ const progressText = document.getElementById("progressText");
 const progressFill = document.getElementById("progressFill");
 const checkBtn = document.getElementById("checkBtn");
 const nextBtn = document.getElementById("nextBtn");
-const showBtn = document.getElementById("showBtn");
 const answerBtn = document.getElementById("answerBtn");
 const shuffleBtn = document.getElementById("shuffleBtn");
 const sectionSelect = document.getElementById("sectionSelect");
@@ -144,14 +143,6 @@ const registerAnswer = () => {
   nextBtn.disabled = false;
 };
 
-const showHint = () => {
-  const question = activeQuestions[currentIndex];
-  const hint = question.hint || "Sin pista disponible para este ejercicio.";
-  feedback.className = "feedback warning";
-  feedback.innerHTML = `<strong>Pista</strong><br /><span>${hint}</span>`;
-  feedback.style.display = "block";
-};
-
 const showAnswer = () => {
   const question = activeQuestions[currentIndex];
   const answer = question.answerText || question.answer || "Sin respuesta registrada.";
@@ -202,7 +193,6 @@ const showSummary = () => {
 };
 
 checkBtn.addEventListener("click", registerAnswer);
-showBtn.addEventListener("click", showHint);
 answerBtn.addEventListener("click", showAnswer);
 nextBtn.addEventListener("click", goNext);
 shuffleBtn.addEventListener("click", () => {
