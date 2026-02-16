@@ -274,7 +274,7 @@ window.QUESTION_BANK = [
       "Crear BD con CREATE DATABASE.",
       "Consultar sys.databases o usar SELECT DB_NAME()."
     ],
-    answerText: "Script con CREATE DATABASE y validacion en sys.databases.",
+    answerText: "CREATE DATABASE BD_GrupoComercial_SV;\nGO\nSELECT name FROM sys.databases WHERE name = 'BD_GrupoComercial_SV';",
     hint: "Puedes usar USE para cambiar de contexto."
   },
   {
@@ -288,7 +288,7 @@ window.QUESTION_BANK = [
       "IdCliente INT IDENTITY PRIMARY KEY",
       "Nombres, Apellidos, DUI, Email, FechaRegistro"
     ],
-    answerText: "CREATE TABLE Clientes con PK identidad y campos NOT NULL.",
+    answerText: "CREATE TABLE Clientes (\n  IdCliente INT IDENTITY(1,1) PRIMARY KEY,\n  Nombres NVARCHAR(80) NOT NULL,\n  Apellidos NVARCHAR(80) NOT NULL,\n  DUI VARCHAR(10) NOT NULL,\n  Email VARCHAR(120) NOT NULL,\n  FechaRegistro DATE NOT NULL\n);",
     hint: "Define NOT NULL donde aplique."
   },
   {
@@ -303,7 +303,7 @@ window.QUESTION_BANK = [
       "CHECK para Email",
       "DEFAULT en FechaRegistro"
     ],
-    answerText: "ALTER TABLE ADD CONSTRAINT UNIQUE, CHECK y DEFAULT.",
+    answerText: "ALTER TABLE Clientes\n  ADD CONSTRAINT UQ_Clientes_DUI UNIQUE (DUI);\nALTER TABLE Clientes\n  ADD CONSTRAINT CK_Clientes_Email CHECK (Email LIKE '%@%.%');\nALTER TABLE Clientes\n  ADD CONSTRAINT DF_Clientes_FechaRegistro DEFAULT (GETDATE()) FOR FechaRegistro;",
     hint: "Usa ALTER TABLE ADD CONSTRAINT."
   },
   {
@@ -318,7 +318,7 @@ window.QUESTION_BANK = [
       "Crear IdCliente FK",
       "Definir integridad referencial"
     ],
-    answerText: "Ventas con FK a Clientes y fecha/total de venta.",
+    answerText: "CREATE TABLE Ventas (\n  IdVenta INT IDENTITY(1,1) PRIMARY KEY,\n  IdCliente INT NOT NULL,\n  IdEmpleado INT NOT NULL,\n  Fecha DATE NOT NULL,\n  Total DECIMAL(10,2) NOT NULL,\n  CONSTRAINT FK_Ventas_Clientes FOREIGN KEY (IdCliente) REFERENCES Clientes(IdCliente),\n  CONSTRAINT FK_Ventas_Empleados FOREIGN KEY (IdEmpleado) REFERENCES Empleados(IdEmpleado)\n);",
     hint: "Usa FOREIGN KEY con REFERENCES."
   },
   {
@@ -332,7 +332,7 @@ window.QUESTION_BANK = [
       "ALTER TABLE ADD Telefono",
       "ALTER TABLE ALTER COLUMN Email"
     ],
-    answerText: "ALTER TABLE ADD Telefono y ALTER COLUMN Email VARCHAR(150).",
+    answerText: "ALTER TABLE Clientes ADD Telefono VARCHAR(20) NULL;\nALTER TABLE Clientes ALTER COLUMN Email VARCHAR(150) NOT NULL;",
     hint: "Verifica longitud actual antes de cambiarla."
   },
   {
@@ -346,7 +346,7 @@ window.QUESTION_BANK = [
       "Usa INSERT INTO Clientes",
       "Incluye DUI y Email validos"
     ],
-    answerText: "Cuatro INSERT con DUI unicos y fechas distintas.",
+    answerText: "INSERT INTO Clientes (Nombres, Apellidos, DUI, Email, FechaRegistro, Telefono) VALUES\n('Ana', 'Ramos', '01234567-8', 'ana.ramos@mail.com', '2025-01-12', '7001-2233'),\n('Luis', 'Mejia', '12345678-9', 'luis.mejia@mail.com', '2025-02-03', '7011-2244'),\n('Carla', 'Sosa', '23456789-0', 'carla.sosa@mail.com', '2025-02-18', '7022-2255'),\n('David', 'Lopez', '34567890-1', 'david.lopez@mail.com', '2025-03-05', '7033-2266');",
     hint: "Puedes usar fechas diferentes en FechaRegistro."
   },
   {
@@ -360,7 +360,7 @@ window.QUESTION_BANK = [
       "Crea la tabla Productos si no existe",
       "Incluye Stock, Precio, Nombre"
     ],
-    answerText: "Productos con Nombre, Precio DECIMAL y Stock INT.",
+    answerText: "IF OBJECT_ID('Productos') IS NULL\nBEGIN\n  CREATE TABLE Productos (\n    IdProducto INT IDENTITY(1,1) PRIMARY KEY,\n    Nombre NVARCHAR(120) NOT NULL,\n    Categoria NVARCHAR(60) NOT NULL,\n    Proveedor NVARCHAR(80) NULL,\n    Precio DECIMAL(10,2) NOT NULL,\n    Stock INT NOT NULL\n  );\nEND;\nINSERT INTO Productos (Nombre, Categoria, Proveedor, Precio, Stock) VALUES\n('Audifonos Pro', 'Audio', 'Sonik', 45.90, 20),\n('Teclado Mecanico', 'Computo', 'KeyMaster', 79.99, 12),\n('Mouse Inalambrico', 'Computo', 'Clicky', 25.50, 30),\n('Bocina BT', 'Audio', 'Sonik', 55.00, 15),\n('SSD 1TB', 'Computo', 'StorageX', 110.00, 8),\n('Router AC1200', 'Redes', 'NetHome', 60.00, 9);",
     hint: "Usa precios realistas para consultas posteriores."
   },
   {
@@ -374,7 +374,7 @@ window.QUESTION_BANK = [
       "Agregar columnas Salario y FechaContratacion",
       "Insertar empleados con anios distintos"
     ],
-    answerText: "Empleados con Salario DECIMAL y fechas en anios distintos.",
+    answerText: "IF OBJECT_ID('Empleados') IS NULL\nBEGIN\n  CREATE TABLE Empleados (\n    IdEmpleado INT IDENTITY(1,1) PRIMARY KEY,\n    Nombres NVARCHAR(80) NOT NULL,\n    Apellidos NVARCHAR(80) NOT NULL,\n    Cargo NVARCHAR(60) NOT NULL,\n    Salario DECIMAL(10,2) NOT NULL,\n    FechaContratacion DATE NOT NULL,\n    Sucursal NVARCHAR(60) NOT NULL\n  );\nEND;\nINSERT INTO Empleados (Nombres, Apellidos, Cargo, Salario, FechaContratacion, Sucursal) VALUES\n('Mario', 'Gomez', 'Vendedor', 550.00, '2023-05-10', 'Centro'),\n('Patricia', 'Diaz', 'Vendedor', 600.00, '2022-11-02', 'Norte'),\n('Ernesto', 'Reyes', 'Supervisor', 850.00, '2021-07-15', 'Centro');",
     hint: "Define salario con DECIMAL(10,2)."
   },
   {
@@ -389,7 +389,7 @@ window.QUESTION_BANK = [
       "Ventas en meses distintos",
       "Clientes distintos"
     ],
-    answerText: "Ventas + DetalleVenta con cantidad y precio unitario.",
+    answerText: "INSERT INTO Ventas (IdCliente, IdEmpleado, Fecha, Total) VALUES\n(1, 1, '2025-01-15', 145.90),\n(2, 2, '2025-01-28', 205.50),\n(3, 1, '2025-02-02', 89.99),\n(4, 3, '2025-02-14', 320.00),\n(1, 2, '2025-02-27', 150.00),\n(2, 1, '2025-03-03', 240.00),\n(3, 2, '2025-03-10', 175.00),\n(4, 1, '2025-03-18', 98.50),\n(1, 3, '2025-04-05', 260.00),\n(2, 2, '2025-04-19', 199.90);\n\nINSERT INTO DetalleVenta (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES\n(1, 1, 1, 45.90), (1, 2, 1, 79.99), (1, 3, 1, 25.50),\n(2, 2, 1, 79.99), (2, 4, 1, 55.00), (2, 5, 1, 110.00),\n(3, 3, 1, 25.50), (3, 6, 1, 60.00), (3, 1, 1, 45.90),\n(4, 5, 2, 110.00), (4, 2, 1, 79.99), (4, 4, 1, 55.00),\n(5, 1, 1, 45.90), (5, 6, 1, 60.00), (5, 3, 2, 25.50),\n(6, 2, 2, 79.99), (6, 4, 1, 55.00), (6, 6, 1, 60.00),\n(7, 5, 1, 110.00), (7, 3, 1, 25.50), (7, 4, 1, 55.00),\n(8, 1, 1, 45.90), (8, 2, 1, 79.99), (8, 6, 1, 60.00),\n(9, 5, 1, 110.00), (9, 4, 1, 55.00), (9, 3, 2, 25.50),\n(10, 2, 1, 79.99), (10, 5, 1, 110.00), (10, 1, 1, 45.90);",
     hint: "Piensa en IdVenta + IdProducto."
   },
   {
@@ -403,7 +403,7 @@ window.QUESTION_BANK = [
       "Usa MONTH(FechaRegistro) = 2",
       "Ordena por fecha"
     ],
-    answerText: "SELECT ... WHERE MONTH(FechaRegistro)=2 ORDER BY FechaRegistro.",
+    answerText: "SELECT IdCliente, Nombres, Apellidos, FechaRegistro\nFROM Clientes\nWHERE MONTH(FechaRegistro) = 2\nORDER BY FechaRegistro;",
     hint: "Recuerda filtrar por mes."
   },
   {
@@ -417,7 +417,7 @@ window.QUESTION_BANK = [
       "Selecciona Nombre, Stock",
       "Ordena por Stock ASC"
     ],
-    answerText: "SELECT Nombre, Stock FROM Productos WHERE Stock < 10.",
+    answerText: "SELECT IdProducto, Nombre, Stock\nFROM Productos\nWHERE Stock < 10\nORDER BY Stock ASC;",
     hint: "Usa WHERE Stock < 10."
   },
   {
@@ -431,7 +431,7 @@ window.QUESTION_BANK = [
       "Definir primer vendedor por FechaContratacion",
       "Usar JOIN entre Ventas y Empleados"
     ],
-    answerText: "Subconsulta para IdEmpleado mas antiguo y JOIN con Ventas.",
+    answerText: "SELECT v.*\nFROM Ventas v\nJOIN Empleados e ON e.IdEmpleado = v.IdEmpleado\nWHERE e.IdEmpleado = (\n  SELECT TOP (1) IdEmpleado FROM Empleados ORDER BY FechaContratacion ASC\n);",
     hint: "Subconsulta para obtener el vendedor mas antiguo."
   },
   {
@@ -445,7 +445,7 @@ window.QUESTION_BANK = [
       "Usa UPDATE con WHERE",
       "Verifica el resultado con SELECT"
     ],
-    answerText: "UPDATE Clientes SET Telefono='...' WHERE IdCliente=...",
+    answerText: "UPDATE Clientes\nSET Telefono = '7999-1234'\nWHERE IdCliente = 2;\nSELECT IdCliente, Telefono FROM Clientes WHERE IdCliente = 2;",
     hint: "Filtra por IdCliente o DUI."
   },
   {
@@ -459,7 +459,7 @@ window.QUESTION_BANK = [
       "Usa UPDATE",
       "Aplica un nuevo precio o marca como descontinuado"
     ],
-    answerText: "UPDATE Productos SET Precio=... WHERE Stock=0.",
+    answerText: "UPDATE Productos\nSET Precio = Precio * 0.90\nWHERE Stock = 0;",
     hint: "WHERE Stock = 0."
   },
   {
@@ -473,7 +473,7 @@ window.QUESTION_BANK = [
       "Calcular antiguedad",
       "Actualizar Salario con porcentaje"
     ],
-    answerText: "UPDATE Empleados SET Salario=Salario*1.05 WHERE DATEDIFF(YEAR, FechaContratacion, GETDATE())>=1.",
+    answerText: "UPDATE Empleados\nSET Salario = Salario * 1.05\nWHERE DATEDIFF(YEAR, FechaContratacion, GETDATE()) >= 1;",
     hint: "Usa DATEDIFF(YEAR, FechaContratacion, GETDATE())."
   },
   {
@@ -487,7 +487,8 @@ window.QUESTION_BANK = [
       "Usa LEFT JOIN o NOT EXISTS",
       "Eliminar solo los sin movimientos"
     ],
-    answerText: "DELETE c FROM Clientes c WHERE NOT EXISTS (SELECT 1 FROM Ventas v WHERE v.IdCliente=c.IdCliente).",
+    answerText: "DELETE c\nFROM Clientes c\nWHERE NOT EXISTS (\n  SELECT 1 FROM Ventas v WHERE v.IdCliente = c.IdCliente
+  );",
     hint: "Cuidado con integridad referencial."
   },
   {
@@ -502,7 +503,7 @@ window.QUESTION_BANK = [
       "GROUP BY vendedor",
       "ORDER BY DESC"
     ],
-    answerText: "SELECT Empleado, SUM(Total) FROM Ventas GROUP BY Empleado ORDER BY SUM(Total) DESC.",
+    answerText: "SELECT v.IdEmpleado, SUM(v.Total) AS TotalVendido\nFROM Ventas v\nGROUP BY v.IdEmpleado\nORDER BY TotalVendido DESC;",
     hint: "Si tienes DetalleVenta, suma cantidad * precio."
   },
   {
@@ -516,7 +517,7 @@ window.QUESTION_BANK = [
       "Sumar total por cliente",
       "Ordenar y tomar TOP 3"
     ],
-    answerText: "SELECT TOP (3) IdCliente, SUM(Total) FROM Ventas GROUP BY IdCliente ORDER BY SUM(Total) DESC.",
+    answerText: "SELECT TOP (3) v.IdCliente, SUM(v.Total) AS TotalComprado\nFROM Ventas v\nGROUP BY v.IdCliente\nORDER BY TotalComprado DESC;",
     hint: "Usa TOP (3) con ORDER BY DESC."
   },
   {
@@ -531,7 +532,7 @@ window.QUESTION_BANK = [
       "Sumar ingresos",
       "Ordenar cronologicamente"
     ],
-    answerText: "SELECT YEAR(Fecha), MONTH(Fecha), SUM(Total) FROM Ventas GROUP BY YEAR(Fecha), MONTH(Fecha) ORDER BY YEAR(Fecha), MONTH(Fecha).",
+    answerText: "SELECT YEAR(Fecha) AS Anio, MONTH(Fecha) AS Mes, SUM(Total) AS Ingresos\nFROM Ventas\nGROUP BY YEAR(Fecha), MONTH(Fecha)\nORDER BY Anio, Mes;",
     hint: "Combina YEAR() y MONTH()."
   },
   {
@@ -545,7 +546,7 @@ window.QUESTION_BANK = [
       "Calcular AVG(Precio)",
       "Comparar con subconsulta"
     ],
-    answerText: "SELECT * FROM Productos WHERE Precio > (SELECT AVG(Precio) FROM Productos).",
+    answerText: "SELECT IdProducto, Nombre, Precio\nFROM Productos\nWHERE Precio > (SELECT AVG(Precio) FROM Productos);",
     hint: "Usa una subconsulta en WHERE."
   },
   {
@@ -559,7 +560,7 @@ window.QUESTION_BANK = [
       "Contar ventas por empleado",
       "Ordenar DESC y TOP 1"
     ],
-    answerText: "SELECT TOP (1) IdEmpleado, COUNT(*) FROM Ventas GROUP BY IdEmpleado ORDER BY COUNT(*) DESC.",
+    answerText: "SELECT TOP (1) IdEmpleado, COUNT(*) AS CantidadVentas\nFROM Ventas\nGROUP BY IdEmpleado\nORDER BY CantidadVentas DESC;",
     hint: "COUNT(IdVenta) por empleado."
   },
   {
@@ -573,7 +574,7 @@ window.QUESTION_BANK = [
       "Sumar cantidad por producto",
       "Filtrar con HAVING > 5"
     ],
-    answerText: "SELECT IdProducto, SUM(Cantidad) FROM DetalleVenta GROUP BY IdProducto HAVING SUM(Cantidad) > 5.",
+    answerText: "SELECT IdProducto, SUM(Cantidad) AS TotalVendidas\nFROM DetalleVenta\nGROUP BY IdProducto\nHAVING SUM(Cantidad) > 5;",
     hint: "Necesitas DetalleVenta."
   },
   {
@@ -588,7 +589,7 @@ window.QUESTION_BANK = [
       "FK en Ventas",
       "Verificar integridad"
     ],
-    answerText: "Ventas con FKs a Empleados y Clientes; DetalleVenta con FK a Productos.",
+    answerText: "CREATE TABLE Empleados (\n  IdEmpleado INT IDENTITY(1,1) PRIMARY KEY,\n  Nombres NVARCHAR(80) NOT NULL,\n  Apellidos NVARCHAR(80) NOT NULL,\n  Cargo NVARCHAR(60) NOT NULL,\n  Salario DECIMAL(10,2) NOT NULL,\n  FechaContratacion DATE NOT NULL,\n  Sucursal NVARCHAR(60) NOT NULL\n);\n\nCREATE TABLE Productos (\n  IdProducto INT IDENTITY(1,1) PRIMARY KEY,\n  Nombre NVARCHAR(120) NOT NULL,\n  Categoria NVARCHAR(60) NOT NULL,\n  Proveedor NVARCHAR(80) NULL,\n  Precio DECIMAL(10,2) NOT NULL,\n  Stock INT NOT NULL\n);\n\nALTER TABLE Ventas\n  ADD CONSTRAINT FK_Ventas_Empleados FOREIGN KEY (IdEmpleado) REFERENCES Empleados(IdEmpleado);",
     hint: "Puedes usar ON DELETE NO ACTION."
   },
   {
@@ -602,7 +603,7 @@ window.QUESTION_BANK = [
       "Captura en imagen",
       "Describe cardinalidades"
     ],
-    answerText: "Diagrama con Clientes-Ventas-DetalleVenta-Productos y Empleados.",
+    answerText: "Diagrama con relaciones: Clientes 1-N Ventas, Empleados 1-N Ventas, Ventas 1-N DetalleVenta, Productos 1-N DetalleVenta.",
     hint: "Puedes usar SSMS para generar el diagrama."
   },
   {
@@ -616,7 +617,7 @@ window.QUESTION_BANK = [
       "Crear indice no cluster",
       "Verificar con sys.indexes"
     ],
-    answerText: "CREATE INDEX IX_Productos_Nombre ON Productos(Nombre).",
+    answerText: "CREATE INDEX IX_Productos_Nombre ON Productos(Nombre);\nSELECT name FROM sys.indexes WHERE name = 'IX_Productos_Nombre';",
     hint: "Usa CREATE INDEX."
   },
   {
@@ -630,7 +631,7 @@ window.QUESTION_BANK = [
       "ALTER TABLE ADD Activo",
       "Actualizar Activo=0 en un cliente"
     ],
-    answerText: "ALTER TABLE Clientes ADD Activo BIT DEFAULT 1; UPDATE Clientes SET Activo=0 WHERE ...",
+    answerText: "ALTER TABLE Clientes ADD Activo BIT NOT NULL CONSTRAINT DF_Clientes_Activo DEFAULT (1);\nUPDATE Clientes SET Activo = 0 WHERE IdCliente = 3;",
     hint: "Usa BIT con DEFAULT 1."
   },
   {
@@ -644,7 +645,7 @@ window.QUESTION_BANK = [
       "Usa LEFT JOIN o NOT EXISTS",
       "Filtra Activo=1"
     ],
-    answerText: "SELECT c.* FROM Clientes c WHERE c.Activo=1 AND NOT EXISTS (SELECT 1 FROM Ventas v WHERE v.IdCliente=c.IdCliente).",
+    answerText: "SELECT c.*\nFROM Clientes c\nWHERE c.Activo = 1\n  AND NOT EXISTS (SELECT 1 FROM Ventas v WHERE v.IdCliente = c.IdCliente);",
     hint: "Combina Activo y NOT EXISTS."
   },
   {
@@ -658,7 +659,7 @@ window.QUESTION_BANK = [
       "Usa AVG sobre Total",
       "Devuelve un solo valor"
     ],
-    answerText: "SELECT AVG(Total) AS TicketPromedio FROM Ventas.",
+    answerText: "SELECT AVG(Total) AS TicketPromedio\nFROM Ventas;",
     hint: "AVG(Total)."
   },
   {
@@ -672,7 +673,7 @@ window.QUESTION_BANK = [
       "Agrupar por IdVenta en DetalleVenta",
       "Contar productos distintos"
     ],
-    answerText: "SELECT IdVenta FROM DetalleVenta GROUP BY IdVenta HAVING COUNT(DISTINCT IdProducto) > 3.",
+    answerText: "SELECT IdVenta\nFROM DetalleVenta\nGROUP BY IdVenta\nHAVING COUNT(DISTINCT IdProducto) > 3;",
     hint: "COUNT(DISTINCT IdProducto)."
   },
   {
@@ -686,7 +687,7 @@ window.QUESTION_BANK = [
       "Agregar columna Categoria si no existe",
       "Actualizar solo Audio"
     ],
-    answerText: "UPDATE Productos SET Precio=Precio*1.08 WHERE Categoria='Audio'.",
+    answerText: "UPDATE Productos\nSET Precio = Precio * 1.08\nWHERE Categoria = 'Audio';",
     hint: "Usa porcentaje con multiplicacion."
   },
   {
@@ -701,7 +702,7 @@ window.QUESTION_BANK = [
       "SUM del total",
       "Ordenar por total"
     ],
-    answerText: "SELECT IdCliente, COUNT(*) AS Compras, SUM(Total) AS Total FROM Ventas GROUP BY IdCliente ORDER BY Total DESC.",
+    answerText: "SELECT IdCliente, COUNT(*) AS Compras, SUM(Total) AS TotalGastado\nFROM Ventas\nGROUP BY IdCliente\nORDER BY TotalGastado DESC;",
     hint: "COUNT y SUM juntos."
   },
   {
@@ -715,7 +716,7 @@ window.QUESTION_BANK = [
       "CREATE VIEW",
       "JOIN Ventas y Clientes"
     ],
-    answerText: "CREATE VIEW VentasResumen AS SELECT v.IdVenta, c.Nombres, v.Fecha, v.Total FROM Ventas v JOIN Clientes c ON ...",
+    answerText: "CREATE VIEW VentasResumen AS\nSELECT v.IdVenta, c.Nombres, c.Apellidos, v.Fecha, v.Total\nFROM Ventas v\nJOIN Clientes c ON c.IdCliente = v.IdCliente;",
     hint: "Incluye nombre del cliente."
   },
   {
@@ -730,7 +731,7 @@ window.QUESTION_BANK = [
       "INSERT en Ventas",
       "Retornar IdVenta"
     ],
-    answerText: "PROCEDURE con parametros cliente, empleado, fecha y total; inserta y retorna SCOPE_IDENTITY().",
+    answerText: "CREATE PROCEDURE sp_RegistrarVenta\n  @IdCliente INT,\n  @IdEmpleado INT,\n  @Fecha DATE,\n  @Total DECIMAL(10,2)\nAS\nBEGIN\n  INSERT INTO Ventas (IdCliente, IdEmpleado, Fecha, Total)\n  VALUES (@IdCliente, @IdEmpleado, @Fecha, @Total);\n\n  SELECT SCOPE_IDENTITY() AS IdVenta;\nEND;",
     hint: "Usa SCOPE_IDENTITY()."
   },
   {
@@ -744,7 +745,7 @@ window.QUESTION_BANK = [
       "Crear PreciosHistoricos",
       "Insertar precio anterior cuando actualices"
     ],
-    answerText: "Tabla con IdProducto, PrecioAnterior, FechaCambio y trigger o script de actualizacion.",
+    answerText: "CREATE TABLE PreciosHistoricos (\n  IdHistorial INT IDENTITY(1,1) PRIMARY KEY,\n  IdProducto INT NOT NULL,\n  PrecioAnterior DECIMAL(10,2) NOT NULL,\n  FechaCambio DATETIME NOT NULL DEFAULT GETDATE()\n);\n\nINSERT INTO PreciosHistoricos (IdProducto, PrecioAnterior)\nSELECT IdProducto, Precio FROM Productos WHERE IdProducto = 1;\n\nUPDATE Productos SET Precio = 99.99 WHERE IdProducto = 1;",
     hint: "Piensa en auditoria de cambios."
   },
   {
@@ -758,7 +759,7 @@ window.QUESTION_BANK = [
       "Usa DATENAME(WEEKDAY, Fecha)",
       "Agrupa y suma"
     ],
-    answerText: "SELECT DATENAME(WEEKDAY, Fecha) AS Dia, SUM(Total) FROM Ventas GROUP BY DATENAME(WEEKDAY, Fecha).",
+    answerText: "SELECT DATENAME(WEEKDAY, Fecha) AS Dia, SUM(Total) AS TotalDia\nFROM Ventas\nGROUP BY DATENAME(WEEKDAY, Fecha);",
     hint: "DATENAME(WEEKDAY, Fecha)."
   },
     {
@@ -784,7 +785,7 @@ window.QUESTION_BANK = [
         "Cantidad, PrecioUnitario",
         "FK a Ventas y Productos"
       ],
-      answerText: "CREATE TABLE DetalleVenta (IdVenta INT, IdProducto INT, Cantidad INT, PrecioUnitario DECIMAL(10,2), PRIMARY KEY (IdVenta, IdProducto), ...).",
+      answerText: "CREATE TABLE DetalleVenta (\n  IdVenta INT NOT NULL,\n  IdProducto INT NOT NULL,\n  Cantidad INT NOT NULL,\n  PrecioUnitario DECIMAL(10,2) NOT NULL,\n  CONSTRAINT PK_DetalleVenta PRIMARY KEY (IdVenta, IdProducto),\n  CONSTRAINT FK_DetalleVenta_Ventas FOREIGN KEY (IdVenta) REFERENCES Ventas(IdVenta),\n  CONSTRAINT FK_DetalleVenta_Productos FOREIGN KEY (IdProducto) REFERENCES Productos(IdProducto)\n);",
       hint: "Usa PRIMARY KEY (IdVenta, IdProducto)."
     },
     {
@@ -799,7 +800,7 @@ window.QUESTION_BANK = [
         "Emails con dominio",
         "Fechas distribuidas en 3 meses"
       ],
-      answerText: "12 INSERT con DUI en formato ########-# y fechas en meses distintos.",
+      answerText: "INSERT INTO Clientes (Nombres, Apellidos, DUI, Email, FechaRegistro, Telefono) VALUES\n('Sofia','Mendez','45678901-2','sofia.mendez@mail.com','2025-01-04','7111-1100'),\n('Hector','Vega','56789012-3','hector.vega@mail.com','2025-01-19','7111-1101'),\n('Laura','Perez','67890123-4','laura.perez@mail.com','2025-01-26','7111-1102'),\n('Oscar','Lara','78901234-5','oscar.lara@mail.com','2025-02-02','7111-1103'),\n('Paula','Serrano','89012345-6','paula.serrano@mail.com','2025-02-09','7111-1104'),\n('Rene','Guzman','90123456-7','rene.guzman@mail.com','2025-02-15','7111-1105'),\n('Diana','Campos','01234567-9','diana.campos@mail.com','2025-02-25','7111-1106'),\n('Ivan','Aguilar','11234567-0','ivan.aguilar@mail.com','2025-03-03','7111-1107'),\n('Nora','Diaz','21234567-1','nora.diaz@mail.com','2025-03-10','7111-1108'),\n('Tomas','Ibarra','31234567-2','tomas.ibarra@mail.com','2025-03-16','7111-1109'),\n('Vero','Lopez','41234567-3','vero.lopez@mail.com','2025-03-20','7111-1110'),\n('Joel','Martinez','51234567-4','joel.martinez@mail.com','2025-03-27','7111-1111');",
       hint: "Usa un CHECK para el formato si lo tienes."
     },
     {
@@ -813,7 +814,7 @@ window.QUESTION_BANK = [
         "Agregar columnas Categoria y Proveedor",
         "Precios entre 10 y 1500"
       ],
-      answerText: "ALTER TABLE Productos ADD Categoria, Proveedor; INSERT con precios realistas.",
+      answerText: "ALTER TABLE Productos ADD Categoria NVARCHAR(60) NULL, Proveedor NVARCHAR(80) NULL;\nINSERT INTO Productos (Nombre, Categoria, Proveedor, Precio, Stock) VALUES\n('Monitor 24', 'Computo', 'ViewTek', 180.00, 10),\n('Tablet 10', 'Movil', 'Mobee', 210.00, 14),\n('Impresora WiFi', 'Oficina', 'Printy', 135.00, 6),\n('Smartwatch', 'Movil', 'Mobee', 95.00, 22),\n('Microfono USB', 'Audio', 'Sonik', 70.00, 18),\n('Laptop 14', 'Computo', 'TechHub', 650.00, 5),\n('Camara Web', 'Computo', 'ViewTek', 45.00, 20),\n('Parlante Studio', 'Audio', 'Sonik', 120.00, 7),\n('Router Mesh', 'Redes', 'NetHome', 160.00, 9),\n('SSD 2TB', 'Computo', 'StorageX', 220.00, 4),\n('Teclado Slim', 'Computo', 'KeyMaster', 35.00, 25),\n('Mouse Pro', 'Computo', 'Clicky', 40.00, 30),\n('PowerBank', 'Movil', 'Mobee', 28.00, 40),\n('Auriculares BT', 'Audio', 'Sonik', 60.00, 16),\n('Proyector', 'Oficina', 'ViewTek', 480.00, 3);",
       hint: "Categorias: Audio, Computo, Hogar, Movil."
     },
     {
@@ -828,7 +829,7 @@ window.QUESTION_BANK = [
         "ORDER BY DESC",
         "TOP 5"
       ],
-      answerText: "SELECT TOP (5) IdProducto, SUM(Cantidad * PrecioUnitario) AS Ingresos FROM DetalleVenta GROUP BY IdProducto ORDER BY Ingresos DESC.",
+      answerText: "SELECT TOP (5) IdProducto, SUM(Cantidad * PrecioUnitario) AS Ingresos\nFROM DetalleVenta\nGROUP BY IdProducto\nORDER BY Ingresos DESC;",
       hint: "Multiplica cantidad por precio unitario."
     },
     {
@@ -842,7 +843,7 @@ window.QUESTION_BANK = [
         "Comparar Fecha con GETDATE()",
         "DISTINCT clientes"
       ],
-      answerText: "SELECT DISTINCT IdCliente FROM Ventas WHERE Fecha >= DATEADD(DAY, -30, GETDATE()).",
+      answerText: "SELECT DISTINCT IdCliente\nFROM Ventas\nWHERE Fecha >= DATEADD(DAY, -30, GETDATE());",
       hint: "Usa DATEADD y GETDATE."
     },
     {
@@ -856,7 +857,7 @@ window.QUESTION_BANK = [
         "LEFT JOIN DetalleVenta",
         "Filtrar por fecha en Ventas"
       ],
-      answerText: "SELECT p.IdProducto FROM Productos p WHERE NOT EXISTS (SELECT 1 FROM DetalleVenta d JOIN Ventas v ON v.IdVenta=d.IdVenta WHERE d.IdProducto=p.IdProducto AND v.Fecha >= DATEADD(DAY, -60, GETDATE())).",
+      answerText: "SELECT p.IdProducto, p.Nombre\nFROM Productos p\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM DetalleVenta d\n  JOIN Ventas v ON v.IdVenta = d.IdVenta\n  WHERE d.IdProducto = p.IdProducto\n    AND v.Fecha >= DATEADD(DAY, -60, GETDATE())\n);",
       hint: "Usa NOT EXISTS con filtro de fecha."
     },
     {
@@ -870,7 +871,7 @@ window.QUESTION_BANK = [
         "Resta Cantidad de Productos",
         "Usa transaccion"
       ],
-      answerText: "UPDATE p SET Stock = Stock - d.Cantidad FROM Productos p JOIN DetalleVenta d ON p.IdProducto=d.IdProducto WHERE d.IdVenta=...",
+      answerText: "UPDATE p\nSET p.Stock = p.Stock - d.Cantidad\nFROM Productos p\nJOIN DetalleVenta d ON d.IdProducto = p.IdProducto\nWHERE d.IdVenta = 1;",
       hint: "Usa JOIN en UPDATE."
     },
     {
@@ -886,7 +887,7 @@ window.QUESTION_BANK = [
         "UPDATE Stock",
         "COMMIT o ROLLBACK"
       ],
-      answerText: "BEGIN TRAN; INSERT Ventas; INSERT DetalleVenta; UPDATE Productos; COMMIT;",
+      answerText: "BEGIN TRAN;\n\nINSERT INTO Ventas (IdCliente, IdEmpleado, Fecha, Total)\nVALUES (1, 1, GETDATE(), 150.00);\n\nDECLARE @IdVenta INT = SCOPE_IDENTITY();\n\nINSERT INTO DetalleVenta (IdVenta, IdProducto, Cantidad, PrecioUnitario)\nVALUES (@IdVenta, 1, 1, 45.90),\n       (@IdVenta, 2, 1, 79.99),\n       (@IdVenta, 3, 1, 25.50);\n\nUPDATE p\nSET p.Stock = p.Stock - d.Cantidad\nFROM Productos p\nJOIN DetalleVenta d ON d.IdProducto = p.IdProducto\nWHERE d.IdVenta = @IdVenta;\n\nCOMMIT;",
       hint: "Si algo falla, ROLLBACK."
     },
     {
@@ -900,7 +901,7 @@ window.QUESTION_BANK = [
         "Promedio del total por cliente",
         "ORDER BY DESC"
       ],
-      answerText: "SELECT IdCliente, AVG(Total) AS TicketPromedio FROM Ventas GROUP BY IdCliente ORDER BY TicketPromedio DESC.",
+      answerText: "SELECT IdCliente, AVG(Total) AS TicketPromedio\nFROM Ventas\nGROUP BY IdCliente\nORDER BY TicketPromedio DESC;",
       hint: "AVG(Total) por IdCliente."
     },
     {
@@ -914,7 +915,7 @@ window.QUESTION_BANK = [
         "Agregar Sucursal",
         "SUM por sucursal"
       ],
-      answerText: "SELECT e.Sucursal, SUM(v.Total) FROM Ventas v JOIN Empleados e ON v.IdEmpleado=e.IdEmpleado GROUP BY e.Sucursal.",
+      answerText: "SELECT e.Sucursal, SUM(v.Total) AS TotalSucursal\nFROM Ventas v\nJOIN Empleados e ON v.IdEmpleado = e.IdEmpleado\nGROUP BY e.Sucursal;",
       hint: "Relaciona Ventas con Empleados."
     },
     {
@@ -928,7 +929,7 @@ window.QUESTION_BANK = [
         "Detecta emails sin @",
         "Actualizar al formato nombre@dominio.com"
       ],
-      answerText: "UPDATE Clientes SET Email = CONCAT(Nombres, '.', Apellidos, '@empresa.com') WHERE Email NOT LIKE '%@%'.",
+      answerText: "UPDATE Clientes\nSET Email = LOWER(CONCAT(Nombres, '.', Apellidos, '@empresa.com'))\nWHERE Email NOT LIKE '%@%';",
       hint: "Usa CONCAT y LIKE."
     },
     {
@@ -942,7 +943,7 @@ window.QUESTION_BANK = [
         "Sumar por mes",
         "Calcular diferencia"
       ],
-      answerText: "Consulta con YEAR/MONTH y comparar dos agregados.",
+      answerText: "WITH VentasMes AS (\n  SELECT YEAR(Fecha) AS Anio, MONTH(Fecha) AS Mes, SUM(Total) AS TotalMes\n  FROM Ventas\n  GROUP BY YEAR(Fecha), MONTH(Fecha)\n)\nSELECT a.TotalMes AS TotalActual, b.TotalMes AS TotalAnterior,\n       (a.TotalMes - b.TotalMes) AS Diferencia\nFROM VentasMes a\nJOIN VentasMes b\n  ON (a.Anio = b.Anio AND a.Mes = b.Mes + 1) OR (a.Anio = b.Anio + 1 AND a.Mes = 1 AND b.Mes = 12);",
       hint: "Usa CTE o subconsultas para dos meses."
     },
     {
@@ -956,7 +957,7 @@ window.QUESTION_BANK = [
         "ALTER TABLE Empleados",
         "CHECK (Salario > 365)"
       ],
-      answerText: "ALTER TABLE Empleados ADD CONSTRAINT CK_Empleados_Salario CHECK (Salario > 365);",
+      answerText: "ALTER TABLE Empleados\nADD CONSTRAINT CK_Empleados_Salario CHECK (Salario > 365);",
       hint: "Usa ALTER TABLE ADD CONSTRAINT."
     },
     {
@@ -971,7 +972,7 @@ window.QUESTION_BANK = [
         "COUNT DISTINCT Categoria",
         "HAVING > 3"
       ],
-      answerText: "SELECT v.IdCliente FROM Ventas v JOIN DetalleVenta d ON v.IdVenta=d.IdVenta JOIN Productos p ON p.IdProducto=d.IdProducto GROUP BY v.IdCliente HAVING COUNT(DISTINCT p.Categoria) > 3.",
+      answerText: "SELECT v.IdCliente\nFROM Ventas v\nJOIN DetalleVenta d ON v.IdVenta = d.IdVenta\nJOIN Productos p ON p.IdProducto = d.IdProducto\nGROUP BY v.IdCliente\nHAVING COUNT(DISTINCT p.Categoria) > 3;",
       hint: "COUNT DISTINCT Categoria."
     },
       {
@@ -990,7 +991,7 @@ window.QUESTION_BANK = [
           "VENTAS(IdVenta, IdCliente, IdEmpleado, Fecha, Total)",
           "DETALLE_VENTA(IdVenta, IdProducto, Cantidad, PrecioUnitario)"
         ],
-        answerText: "Tablas creadas con PKs y FKs segun diagrama, tipos de datos coherentes y NOT NULL.",
+        answerText: "CREATE DATABASE LabVentas;\nGO\nUSE LabVentas;\n\nCREATE TABLE Clientes (\n  IdCliente INT IDENTITY(1,1) PRIMARY KEY,\n  Nombres NVARCHAR(80) NOT NULL,\n  Apellidos NVARCHAR(80) NOT NULL,\n  DUI VARCHAR(10) NOT NULL,\n  Email VARCHAR(120) NOT NULL,\n  FechaRegistro DATE NOT NULL,\n  Telefono VARCHAR(20) NULL,\n  Activo BIT NOT NULL CONSTRAINT DF_Clientes_Activo DEFAULT (1)\n);\n\nCREATE TABLE Empleados (\n  IdEmpleado INT IDENTITY(1,1) PRIMARY KEY,\n  Nombres NVARCHAR(80) NOT NULL,\n  Apellidos NVARCHAR(80) NOT NULL,\n  Cargo NVARCHAR(60) NOT NULL,\n  Salario DECIMAL(10,2) NOT NULL,\n  FechaContratacion DATE NOT NULL,\n  Sucursal NVARCHAR(60) NOT NULL\n);\n\nCREATE TABLE Productos (\n  IdProducto INT IDENTITY(1,1) PRIMARY KEY,\n  Nombre NVARCHAR(120) NOT NULL,\n  Categoria NVARCHAR(60) NOT NULL,\n  Proveedor NVARCHAR(80) NULL,\n  Precio DECIMAL(10,2) NOT NULL,\n  Stock INT NOT NULL\n);\n\nCREATE TABLE Ventas (\n  IdVenta INT IDENTITY(1,1) PRIMARY KEY,\n  IdCliente INT NOT NULL,\n  IdEmpleado INT NOT NULL,\n  Fecha DATE NOT NULL,\n  Total DECIMAL(10,2) NOT NULL,\n  CONSTRAINT FK_Ventas_Clientes FOREIGN KEY (IdCliente) REFERENCES Clientes(IdCliente),\n  CONSTRAINT FK_Ventas_Empleados FOREIGN KEY (IdEmpleado) REFERENCES Empleados(IdEmpleado)\n);\n\nCREATE TABLE DetalleVenta (\n  IdVenta INT NOT NULL,\n  IdProducto INT NOT NULL,\n  Cantidad INT NOT NULL,\n  PrecioUnitario DECIMAL(10,2) NOT NULL,\n  CONSTRAINT PK_DetalleVenta PRIMARY KEY (IdVenta, IdProducto),\n  CONSTRAINT FK_DetalleVenta_Ventas FOREIGN KEY (IdVenta) REFERENCES Ventas(IdVenta),\n  CONSTRAINT FK_DetalleVenta_Productos FOREIGN KEY (IdProducto) REFERENCES Productos(IdProducto)\n);",
         hint: "Empieza por CLIENTES, EMPLEADOS y PRODUCTOS, luego VENTAS y DETALLE_VENTA."
       },
       {
@@ -1006,7 +1007,7 @@ window.QUESTION_BANK = [
           "DEFAULT en FechaRegistro",
           "FKs con NO ACTION"
         ],
-        answerText: "ALTER TABLE con UNIQUE, CHECK, DEFAULT y FKs definidas.",
+        answerText: "ALTER TABLE Clientes\n  ADD CONSTRAINT UQ_Clientes_DUI UNIQUE (DUI);\nALTER TABLE Clientes\n  ADD CONSTRAINT CK_Clientes_Email CHECK (Email LIKE '%@%.%');\nALTER TABLE Clientes\n  ADD CONSTRAINT DF_Clientes_FechaRegistro DEFAULT (GETDATE()) FOR FechaRegistro;\n\nALTER TABLE Ventas\n  ADD CONSTRAINT FK_Ventas_Clientes FOREIGN KEY (IdCliente) REFERENCES Clientes(IdCliente);\nALTER TABLE Ventas\n  ADD CONSTRAINT FK_Ventas_Empleados FOREIGN KEY (IdEmpleado) REFERENCES Empleados(IdEmpleado);",
         hint: "Usa ALTER TABLE ADD CONSTRAINT."
       },
       {
@@ -1021,7 +1022,7 @@ window.QUESTION_BANK = [
           "10 ventas en 3 meses distintos",
           "Cada venta con 3 detalles"
         ],
-        answerText: "INSERTs coherentes en todas las tablas y ventas distribuidas en meses.",
+        answerText: "INSERT INTO Clientes (Nombres, Apellidos, DUI, Email, FechaRegistro, Telefono, Activo) VALUES\n('Ana','Ramos','01234567-8','ana.ramos@mail.com','2025-01-12','7001-2233',1),\n('Luis','Mejia','12345678-9','luis.mejia@mail.com','2025-02-03','7011-2244',1),\n('Carla','Sosa','23456789-0','carla.sosa@mail.com','2025-02-18','7022-2255',1),\n('David','Lopez','34567890-1','david.lopez@mail.com','2025-03-05','7033-2266',1);\n\nINSERT INTO Empleados (Nombres, Apellidos, Cargo, Salario, FechaContratacion, Sucursal) VALUES\n('Mario','Gomez','Vendedor',550.00,'2023-05-10','Centro'),\n('Patricia','Diaz','Vendedor',600.00,'2022-11-02','Norte'),\n('Ernesto','Reyes','Supervisor',850.00,'2021-07-15','Centro');\n\nINSERT INTO Productos (Nombre, Categoria, Proveedor, Precio, Stock) VALUES\n('Audifonos Pro','Audio','Sonik',45.90,20),\n('Teclado Mecanico','Computo','KeyMaster',79.99,12),\n('Mouse Inalambrico','Computo','Clicky',25.50,30),\n('Bocina BT','Audio','Sonik',55.00,15),\n('SSD 1TB','Computo','StorageX',110.00,8),\n('Router AC1200','Redes','NetHome',60.00,9);\n\nINSERT INTO Ventas (IdCliente, IdEmpleado, Fecha, Total) VALUES\n(1,1,'2025-01-15',145.90),(2,2,'2025-01-28',205.50),(3,1,'2025-02-02',89.99),(4,3,'2025-02-14',320.00),(1,2,'2025-02-27',150.00),(2,1,'2025-03-03',240.00),(3,2,'2025-03-10',175.00),(4,1,'2025-03-18',98.50),(1,3,'2025-04-05',260.00),(2,2,'2025-04-19',199.90);\n\nINSERT INTO DetalleVenta (IdVenta, IdProducto, Cantidad, PrecioUnitario) VALUES\n(1,1,1,45.90),(1,2,1,79.99),(1,3,1,25.50),\n(2,2,1,79.99),(2,4,1,55.00),(2,5,1,110.00),\n(3,3,1,25.50),(3,6,1,60.00),(3,1,1,45.90),\n(4,5,2,110.00),(4,2,1,79.99),(4,4,1,55.00),\n(5,1,1,45.90),(5,6,1,60.00),(5,3,2,25.50),\n(6,2,2,79.99),(6,4,1,55.00),(6,6,1,60.00),\n(7,5,1,110.00),(7,3,1,25.50),(7,4,1,55.00),\n(8,1,1,45.90),(8,2,1,79.99),(8,6,1,60.00),\n(9,5,1,110.00),(9,4,1,55.00),(9,3,2,25.50),\n(10,2,1,79.99),(10,5,1,110.00),(10,1,1,45.90);",
         hint: "Primero inserta maestros, luego ventas y detalles."
       },
       {
@@ -1036,7 +1037,7 @@ window.QUESTION_BANK = [
           "SUM(Cantidad * PrecioUnitario)",
           "GROUP BY Categoria"
         ],
-        answerText: "SELECT p.Categoria, SUM(d.Cantidad * d.PrecioUnitario) FROM DetalleVenta d JOIN Productos p ON p.IdProducto=d.IdProducto GROUP BY p.Categoria.",
+        answerText: "SELECT p.Categoria, SUM(d.Cantidad * d.PrecioUnitario) AS TotalCategoria\nFROM DetalleVenta d\nJOIN Productos p ON p.IdProducto = d.IdProducto\nGROUP BY p.Categoria;",
         hint: "Agrupa por Categoria."
       },
       {
@@ -1050,7 +1051,7 @@ window.QUESTION_BANK = [
           "SUM de ventas por empleado",
           "TOP 1 ordenado DESC"
         ],
-        answerText: "SELECT TOP (1) v.IdEmpleado, SUM(v.Total) AS Ingresos FROM Ventas v GROUP BY v.IdEmpleado ORDER BY Ingresos DESC.",
+        answerText: "SELECT TOP (1) v.IdEmpleado, SUM(v.Total) AS Ingresos\nFROM Ventas v\nGROUP BY v.IdEmpleado\nORDER BY Ingresos DESC;",
         hint: "SUM(Total) por IdEmpleado."
       },
       {
@@ -1065,7 +1066,7 @@ window.QUESTION_BANK = [
           "Comparar con GETDATE()",
           "Devolver clientes"
         ],
-        answerText: "SELECT v.IdCliente FROM Ventas v GROUP BY v.IdCliente HAVING MAX(v.Fecha) < DATEADD(DAY, -90, GETDATE()).",
+        answerText: "SELECT v.IdCliente\nFROM Ventas v\nGROUP BY v.IdCliente\nHAVING MAX(v.Fecha) < DATEADD(DAY, -90, GETDATE());",
         hint: "Usa MAX(Fecha) y DATEADD."
       },
       {
@@ -1079,7 +1080,7 @@ window.QUESTION_BANK = [
           "Calcular AVG(Total)",
           "Filtrar ventas por encima"
         ],
-        answerText: "SELECT * FROM Ventas WHERE Total > (SELECT AVG(Total) FROM Ventas).",
+        answerText: "SELECT *\nFROM Ventas\nWHERE Total > (SELECT AVG(Total) FROM Ventas);",
         hint: "Subconsulta con AVG(Total)."
       }
 ];

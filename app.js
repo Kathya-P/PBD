@@ -16,6 +16,12 @@ const weakTopics = document.getElementById("weakTopics");
 const restartBtn = document.getElementById("restartBtn");
 
 const QUESTION_BANK = window.QUESTION_BANK || [];
+const DEFAULT_SCHEMA_NOTE =
+  "Esquema base: Clientes(IdCliente, Nombres, Apellidos, DUI, Email, FechaRegistro, Telefono, Activo), " +
+  "Empleados(IdEmpleado, Nombres, Apellidos, Cargo, Salario, FechaContratacion, Sucursal), " +
+  "Productos(IdProducto, Nombre, Categoria, Proveedor, Precio, Stock), " +
+  "Ventas(IdVenta, IdCliente, IdEmpleado, Fecha, Total), " +
+  "DetalleVenta(IdVenta, IdProducto, Cantidad, PrecioUnitario).";
 let pool = [...QUESTION_BANK];
 let activeQuestions = [];
 let currentIndex = 0;
@@ -93,6 +99,10 @@ const renderQuestion = () => {
       <span>${question.difficulty}</span>
     </div>`;
 
+  const schemaNote = question.section === "Practica"
+    ? `<div class="schema-note">${DEFAULT_SCHEMA_NOTE}</div>`
+    : "";
+
   const codeBlock = question.code ? `<pre class="code-block">${question.code}</pre>` : "";
   const taskList = question.tasks
     ? `<ul class="task-list">${question.tasks.map((task) => `<li>${task}</li>`).join("")}</ul>`
@@ -107,6 +117,7 @@ const renderQuestion = () => {
 
   questionCard.innerHTML = `
     ${meta}
+    ${schemaNote}
     <h3>${question.prompt}</h3>
     ${taskList}
     ${codeBlock}
