@@ -23,6 +23,8 @@ let answeredMap = {};
 let completedCount = 0;
 let completedByTopic = {};
 
+const normalize = (value) => value.toString().trim().toLowerCase();
+
 if (!QUESTION_BANK.length) {
   feedback.className = "feedback error";
   feedback.textContent = "No se cargaron preguntas. Verifica questions.js.";
@@ -123,7 +125,7 @@ const registerAnswer = () => {
 
   if (!userAnswer.trim()) {
     feedback.className = "feedback error";
-    feedback.textContent = "Escribe algo antes de guardar.";
+    feedback.textContent = "Escribe algo antes de revisar.";
     feedback.style.display = "block";
     return;
   }
@@ -134,11 +136,33 @@ const registerAnswer = () => {
     completedByTopic[question.topic] = (completedByTopic[question.topic] || 0) + 1;
   }
 
-  feedback.className = "feedback success";
-  feedback.innerHTML = `
-    <strong>Respuesta registrada</strong><br />
-    <span>${question.note || "Guardada para tu practica. Sigue con la siguiente."}</span>
-  `;
+  const answerPool = Array.isArray(question.answer)
+    ? question.answer
+    : question.answerText
+      ? [question.answerText]
+      : [];
+
+  const hasAutoCheck = question.section === "Teoria" && answerPool.length > 0;
+  let isCorrect = false;
+
+  if (hasAutoCheck) {
+    isCorrect = answerPool.map(normalize).includes(normalize(userAnswer));
+  }
+
+  if (hasAutoCheck) {
+    feedback.className = `feedback ${isCorrect ? "success" : "error"}`;
+    feedback.innerHTML = `
+      <strong>${isCorrect ? "Correcta" : "Incorrecta"}</strong><br />
+      <span>Respuesta correcta: ${question.answerText || answerPool[0]}</span>
+    `;
+  } else {
+    feedback.className = "feedback warning";
+    feedback.innerHTML = `
+      <strong>Respuesta registrada</strong><br />
+      <span>Este ejercicio es practico. Compara con la respuesta correcta.</span>
+    `;
+  }
+
   feedback.style.display = "block";
   nextBtn.disabled = false;
 };
