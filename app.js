@@ -142,26 +142,18 @@ const registerAnswer = () => {
       ? [question.answerText]
       : [];
 
-  const hasAutoCheck = question.section === "Teoria" && answerPool.length > 0;
+  const hasAutoCheck = answerPool.length > 0;
   let isCorrect = false;
 
   if (hasAutoCheck) {
     isCorrect = answerPool.map(normalize).includes(normalize(userAnswer));
   }
 
-  if (hasAutoCheck) {
-    feedback.className = `feedback ${isCorrect ? "success" : "error"}`;
-    feedback.innerHTML = `
-      <strong>${isCorrect ? "Correcta" : "Incorrecta"}</strong><br />
-      <span>Respuesta correcta: ${question.answerText || answerPool[0]}</span>
-    `;
-  } else {
-    feedback.className = "feedback warning";
-    feedback.innerHTML = `
-      <strong>Respuesta registrada</strong><br />
-      <span>Este ejercicio es practico. Compara con la respuesta correcta.</span>
-    `;
-  }
+  feedback.className = `feedback ${isCorrect ? "success" : "error"}`;
+  feedback.innerHTML = `
+    <strong>${isCorrect ? "Correcta" : "Incorrecta"}</strong><br />
+    <span>Respuesta correcta: ${question.answerText || answerPool[0] || "No hay respuesta registrada."}</span>
+  `;
 
   feedback.style.display = "block";
   nextBtn.disabled = false;
