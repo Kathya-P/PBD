@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cuestionario SQL Server</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-content">
+      <p class="tag">SQL Server · Laboratorio</p>
+      <h1>Cuestionario de Programacion de Bases de Datos</h1>
+      <p class="subtitle">Teoria + Practica con ejercicios abiertos. Guarda tus respuestas y compara con la correcta.</p>
+      <div class="hero-meta">
+        <span>DDL</span>
+        <span>DML</span>
+        <span>Consultas</span>
+        <span>Integridad</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel" aria-labelledby="config-title">
+      <div class="panel-header">
+        <h2 id="config-title">Configurar practica</h2>
+        <button id="shuffleBtn" class="ghost">Mezclar preguntas</button>
+      </div>
+      <div class="panel-body grid">
+        <div class="field">
+          <label for="sectionSelect">Seccion</label>
+          <select id="sectionSelect">
+            <option value="all">Todas</option>
+            <option value="Teoria" selected>Teoria</option>
+            <option value="Practica">Practica</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="topicSelect">Tema</label>
+          <select id="topicSelect">
+            <option value="all">Todos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="difficultySelect">Dificultad</label>
+          <select id="difficultySelect">
+            <option value="all">Todas</option>
+            <option value="basico">Basico</option>
+            <option value="medio" selected>Medio</option>
+            <option value="avanzado">Avanzado</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="countSelect">Cantidad</label>
+          <select id="countSelect">
+            <option value="all">Todas</option>
+            <option value="8">8</option>
+            <option value="12" selected>12</option>
+            <option value="16">16</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="quiz-title">
+      <div class="panel-header">
+        <h2 id="quiz-title">Ejercicios</h2>
+        <div class="progress" aria-live="polite">
+          <span id="progressText">Pregunta 1 de 1</span>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <article id="questionCard" class="question"></article>
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+        <div class="actions">
+          <button id="checkBtn" class="primary">Guardar respuesta</button>
+          <button id="nextBtn" class="secondary" disabled>Siguiente</button>
+          <button id="showBtn" class="ghost">Ver pista</button>
+          <button id="answerBtn" class="ghost">Ver respuesta</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="summary-title" id="summary" hidden>
+      <div class="panel-header">
+        <h2 id="summary-title">Resumen</h2>
+        <button id="restartBtn" class="primary">Reiniciar practica</button>
+      </div>
+      <div class="panel-body">
+        <div class="summary-grid">
+          <div>
+            <p class="label">Completadas</p>
+            <p id="scoreText" class="score">0/0</p>
+          </div>
+          <div>
+            <p class="label">Temas pendientes</p>
+            <ul id="weakTopics" class="weak-list"></ul>
+          </div>
+        </div>
+        <div>
+          <h3>Consejos</h3>
+          <ul class="recommendations">
+            <li>Guarda tus scripts en una carpeta por tema (DDL, DML, Consultas).</li>
+            <li>Incluye datos de prueba coherentes antes de escribir consultas.</li>
+            <li>Si te bloqueas, usa la pista y reintenta sin copiar soluciones.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Listo para practicar en linea. Exporta tus scripts y subelos a GitHub.</p>
+  </footer>
+
+  <script src="questions.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
