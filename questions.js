@@ -487,8 +487,7 @@ window.QUESTION_BANK = [
       "Usa LEFT JOIN o NOT EXISTS",
       "Eliminar solo los sin movimientos"
     ],
-    answerText: "DELETE c\nFROM Clientes c\nWHERE NOT EXISTS (\n  SELECT 1 FROM Ventas v WHERE v.IdCliente = c.IdCliente
-  );",
+    answerText: "DELETE c\nFROM Clientes c\nWHERE NOT EXISTS (\n  SELECT 1 FROM Ventas v WHERE v.IdCliente = c.IdCliente\n);",
     hint: "Cuidado con integridad referencial."
   },
   {
