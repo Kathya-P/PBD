@@ -14,6 +14,7 @@ const summary = document.getElementById("summary");
 const scoreText = document.getElementById("scoreText");
 const weakTopics = document.getElementById("weakTopics");
 const restartBtn = document.getElementById("restartBtn");
+const studyGuide = document.getElementById("study-guide");
 
 const QUESTION_BANK = window.QUESTION_BANK || [];
 const DEFAULT_SCHEMA_NOTE =
@@ -78,6 +79,19 @@ const buildActiveQuestions = () => {
   completedCount = 0;
   completedByTopic = {};
   summary.hidden = true;
+  if (studyGuide) {
+    studyGuide.hidden = section !== "Guia";
+  }
+  if (section === "Guia") {
+    questionCard.innerHTML = "";
+    feedback.className = "feedback";
+    feedback.textContent = "";
+    feedback.style.display = "none";
+    progressText.textContent = "";
+    progressFill.style.width = "0%";
+    nextBtn.disabled = true;
+    return;
+  }
   renderQuestion();
 };
 
