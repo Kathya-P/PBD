@@ -20,6 +20,155 @@ window.QUESTION_BANK = [
     answerText: "Porque garantiza unicidad, identifica filas y permite relaciones seguras.",
     explanation: "Sin PK es mas facil duplicar registros y fallan relaciones con FKs.",
     hint: "Clave unica, integridad y relaciones."
+  {
+    id: 201,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Consultar ventas realizadas por el vendedor mas antiguo.",
+    tasks: [
+      "Tablas: Ventas, Empleados",
+      "Vendedor mas antiguo por FechaContratacion",
+      "Filtrar ventas por ese IdEmpleado"
+    ],
+    answerText: "SELECT *\nFROM Ventas\nWHERE IdEmpleado = (\n  SELECT TOP 1 IdEmpleado\n  FROM Empleados\n  WHERE Cargo = 'Vendedor'\n  ORDER BY FechaContratacion ASC\n);",
+    hint: "Subconsulta con TOP 1."
+  },
+  {
+    id: 202,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Mostrar el total comprado por el ultimo cliente registrado.",
+    tasks: [
+      "Tablas: Clientes, Ventas, DetalleVentas, Productos",
+      "Ultimo cliente por FechaRegistro",
+      "Sumar Precio * Cantidad"
+    ],
+    answerText: "SELECT C.IdCliente, C.Nombres, C.Apellidos,\n       SUM(P.Precio * DV.Cantidad) AS TotalComprado\nFROM Clientes C\nJOIN Ventas V ON C.IdCliente = V.IdCliente\nJOIN DetalleVentas DV ON V.IdVenta = DV.IdVenta\nJOIN Productos P ON DV.IdProducto = P.IdProducto\nWHERE C.FechaRegistro = (SELECT MAX(FechaRegistro) FROM Clientes)\nGROUP BY C.IdCliente, C.Nombres, C.Apellidos;",
+    hint: "Usa MAX(FechaRegistro)."
+  },
+  {
+    id: 203,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "basico",
+    type: "task",
+    prompt: "Mostrar la lista de productos mas vendidos.",
+    tasks: [
+      "Tabla: DetalleVentas",
+      "SUM(Cantidad) por IdProducto",
+      "ORDER BY DESC"
+    ],
+    answerText: "SELECT IdProducto, SUM(Cantidad) AS Total\nFROM DetalleVentas\nGROUP BY IdProducto\nORDER BY Total DESC;",
+    hint: "Agrupa por IdProducto."
+  },
+  {
+    id: 204,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Mostrar el ranking de vendedores por cantidad de ventas.",
+    tasks: [
+      "Tablas: Empleados, Ventas",
+      "COUNT(Ventas)",
+      "ORDER BY DESC"
+    ],
+    answerText: "SELECT E.Nombres, E.Apellidos, COUNT(V.IdVenta) AS TotalVentas\nFROM Empleados E\nJOIN Ventas V ON E.IdEmpleado = V.IdEmpleado\nGROUP BY E.Nombres, E.Apellidos\nORDER BY TotalVentas DESC;",
+    hint: "COUNT por empleado."
+  },
+  {
+    id: 205,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Mostrar el ranking de clientes por compras realizadas.",
+    tasks: [
+      "Tablas: Clientes, Ventas",
+      "COUNT(Ventas)",
+      "ORDER BY DESC"
+    ],
+    answerText: "SELECT C.Nombres, C.Apellidos, COUNT(V.IdVenta) AS TotalCompras\nFROM Clientes C\nJOIN Ventas V ON C.IdCliente = V.IdCliente\nGROUP BY C.Nombres, C.Apellidos\nORDER BY TotalCompras DESC;",
+    hint: "Cuenta ventas por cliente."
+  },
+  {
+    id: 206,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Mostrar los 3 mejores clientes segun el valor comprado.",
+    tasks: [
+      "Tablas: Clientes, Ventas, DetalleVentas, Productos",
+      "SUM(Precio * Cantidad)",
+      "TOP 3"
+    ],
+    answerText: "SELECT TOP 3 C.Nombres, C.Apellidos,\n       SUM(P.Precio * DV.Cantidad) AS TotalComprado\nFROM Clientes C\nJOIN Ventas V ON C.IdCliente = V.IdCliente\nJOIN DetalleVentas DV ON V.IdVenta = DV.IdVenta\nJOIN Productos P ON DV.IdProducto = P.IdProducto\nGROUP BY C.Nombres, C.Apellidos\nORDER BY TotalComprado DESC;",
+    hint: "Top 3 por total."
+  },
+  {
+    id: 207,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Reporte gerencial con ingresos por mes.",
+    tasks: [
+      "Tablas: Ventas, DetalleVentas, Productos",
+      "Agrupar por MONTH(FechaVenta)",
+      "SUM(Precio * Cantidad)"
+    ],
+    answerText: "SELECT MONTH(V.FechaVenta) AS Mes,\n       SUM(P.Precio * DV.Cantidad) AS Ingresos\nFROM Ventas V\nJOIN DetalleVentas DV ON V.IdVenta = DV.IdVenta\nJOIN Productos P ON DV.IdProducto = P.IdProducto\nGROUP BY MONTH(V.FechaVenta)\nORDER BY Mes;",
+    hint: "Usa MONTH(FechaVenta)."
+  },
+  {
+    id: 208,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "basico",
+    type: "task",
+    prompt: "Mostrar los productos con precio mayor al promedio.",
+    tasks: [
+      "Tabla: Productos",
+      "Comparar con AVG(Precio)"
+    ],
+    answerText: "SELECT *\nFROM Productos\nWHERE Precio > (SELECT AVG(Precio) FROM Productos);",
+    hint: "Subconsulta con AVG."
+  },
+  {
+    id: 209,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Mostrar el empleado que ha realizado mas ventas.",
+    tasks: [
+      "Tablas: Empleados, Ventas",
+      "COUNT(Ventas)",
+      "TOP 1"
+    ],
+    answerText: "SELECT TOP 1 E.Nombres, E.Apellidos, COUNT(V.IdVenta) AS TotalVentas\nFROM Empleados E\nJOIN Ventas V ON E.IdEmpleado = V.IdEmpleado\nGROUP BY E.Nombres, E.Apellidos\nORDER BY TotalVentas DESC;",
+    hint: "TOP 1 por conteo."
+  },
+  {
+    id: 210,
+    section: "Practica Consultas",
+    topic: "Consultas",
+    difficulty: "medio",
+    type: "task",
+    prompt: "Mostrar los productos vendidos mas de 5 veces en total.",
+    tasks: [
+      "Tablas: Productos, DetalleVentas",
+      "SUM(Cantidad)",
+      "HAVING > 5"
+    ],
+    answerText: "SELECT P.NombreProducto, SUM(DV.Cantidad) AS TotalVendido\nFROM Productos P\nJOIN DetalleVentas DV ON P.IdProducto = DV.IdProducto\nGROUP BY P.NombreProducto\nHAVING SUM(DV.Cantidad) > 5;",
+    hint: "HAVING con SUM."
+  }
   },
   {
     id: 3,
