@@ -115,6 +115,173 @@
         </div>
       </div>
     </section>
+
+          <section class="panel" aria-labelledby="study-title" id="study-guide">
+            <div class="panel-header">
+        <h2 id="study-title">Guia de Practicas (explicada)</h2>
+            </div>
+            <div class="panel-body">
+        <p class="subtitle">Resumen completo de las 4 practicas con consultas explicadas para estudiar.</p>
+
+        <h3>Practica 01 - Parte 1 (BD_GrupoComercial_SV)</h3>
+        <ul class="task-list">
+          <li>Crear BD y tablas base: Clientes, Ventas, Empleados, Productos.</li>
+          <li>Agregar restricciones: UNIQUE, CHECK, DEFAULT, PK/FK.</li>
+          <li>Modificar estructuras: agregar Telefono, ajustar Email.</li>
+        </ul>
+        <pre class="code-block">-- Clientes registrados en febrero
+      SELECT *
+      FROM Clientes
+      WHERE MONTH(FechaRegistro) = 2;</pre>
+        <p class="note">Explicacion: filtra por el mes de la fecha de registro.</p>
+
+        <pre class="code-block">-- Productos con stock menor a 10
+      SELECT *
+      FROM Productos
+      WHERE Stock &lt; 10;</pre>
+        <p class="note">Explicacion: muestra productos con bajo inventario.</p>
+
+        <pre class="code-block">-- Ventas del primer vendedor
+      SELECT *
+      FROM Ventas
+      WHERE IdEmpleado = (
+        SELECT IdEmpleado
+        FROM Empleados
+        WHERE FechaContratacion = (
+          SELECT MIN(FechaContratacion)
+          FROM Empleados
+          WHERE Cargo = 'Vendedor'
+        )
+      );</pre>
+        <p class="note">Explicacion: obtiene el vendedor mas antiguo y filtra ventas.</p>
+
+        <pre class="code-block">-- Compras del ultimo cliente registrado
+      SELECT *
+      FROM Clientes
+      WHERE FechaRegistro = (SELECT MAX(FechaRegistro) FROM Clientes);</pre>
+        <p class="note">Explicacion: devuelve el cliente con fecha mas reciente.</p>
+
+        <pre class="code-block">-- Actualizar telefono
+      UPDATE Clientes
+      SET Telefono = '6785-4567'
+      WHERE IdCliente = 12;</pre>
+        <p class="note">Explicacion: actualiza un cliente especifico.</p>
+
+        <pre class="code-block">-- Cambiar precio con stock cero
+      UPDATE Productos
+      SET Precio = 500
+      WHERE Stock = 0;</pre>
+        <p class="note">Explicacion: ajusta precios de productos sin stock.</p>
+
+        <pre class="code-block">-- Aumentar salario a empleados con mas de 1 anio
+      UPDATE Empleados
+      SET Salario = Salario * 1.10
+      WHERE DATEDIFF(YEAR, FechaContratacion, GETDATE()) &gt; 1;</pre>
+        <p class="note">Explicacion: usa DATEDIFF para antiguedad.</p>
+
+        <pre class="code-block">-- Eliminar clientes sin ventas
+      DELETE FROM Clientes
+      WHERE IdCliente NOT IN (SELECT DISTINCT IdCliente FROM Ventas);</pre>
+        <p class="note">Explicacion: elimina clientes sin registros en Ventas.</p>
+
+        <pre class="code-block">-- Borrar productos sin movimientos
+      DELETE FROM Productos
+      WHERE IdProducto NOT IN (SELECT DISTINCT IdProducto FROM Ventas);</pre>
+        <p class="note">Explicacion: elimina productos no usados.</p>
+
+        <h3>Practica 01 - Caso 2 (TecnoService)</h3>
+        <ul class="task-list">
+          <li>BD: BD_TecnoService_SV.</li>
+          <li>Tablas: Clientes, Tecnicos, Estados, OrdenesTrabajos.</li>
+          <li>FKs: OrdenesTrabajos con Clientes, Tecnicos y Estados.</li>
+        </ul>
+
+        <h3>Practica 02 (DetalleVentas y datos reales)</h3>
+        <pre class="code-block">-- Crear DetalleVentas
+      CREATE TABLE DetalleVentas (
+        IdDetalleVenta INT IDENTITY(1,1) PRIMARY KEY,
+        IdVenta INT NOT NULL,
+        IdProducto INT NOT NULL,
+        Cantidad INT NOT NULL,
+        CONSTRAINT FK_Ventas_Detalle FOREIGN KEY (IdVenta) REFERENCES Ventas(IdVenta),
+        CONSTRAINT FK_Producto_Detalle FOREIGN KEY (IdProducto) REFERENCES Productos(IdProducto)
+      );</pre>
+        <p class="note">Explicacion: tabla puente con FKs a ventas y productos.</p>
+
+        <h3>Practica 03 (Consultas de negocio)</h3>
+        <pre class="code-block">-- Total comprado por ultimo cliente registrado
+      SELECT C.IdCliente, C.Nombres, C.Apellidos,
+             SUM(P.Precio * DV.Cantidad) AS TotalComprado
+      FROM Clientes C
+      JOIN Ventas V ON C.IdCliente = V.IdCliente
+      JOIN DetalleVentas DV ON V.IdVenta = DV.IdVenta
+      JOIN Productos P ON DV.IdProducto = P.IdProducto
+      WHERE C.FechaRegistro = (SELECT MAX(FechaRegistro) FROM Clientes)
+      GROUP BY C.IdCliente, C.Nombres, C.Apellidos;</pre>
+        <p class="note">Explicacion: suma el total comprado por el ultimo cliente.</p>
+
+        <pre class="code-block">-- Productos mas vendidos
+      SELECT IdProducto, SUM(Cantidad) AS Total
+      FROM DetalleVentas
+      GROUP BY IdProducto
+      ORDER BY Total DESC;</pre>
+        <p class="note">Explicacion: ranking de productos por cantidad total.</p>
+
+        <pre class="code-block">-- Ranking de vendedores
+      SELECT E.Nombres, E.Apellidos,
+             COUNT(V.IdVenta) AS TotalVentas
+      FROM Empleados E
+      JOIN Ventas V ON E.IdEmpleado = V.IdEmpleado
+      GROUP BY E.Nombres, E.Apellidos
+      ORDER BY TotalVentas DESC;</pre>
+        <p class="note">Explicacion: cuenta ventas por empleado.</p>
+
+        <pre class="code-block">-- Top 3 clientes por valor comprado
+      SELECT TOP 3 C.Nombres, C.Apellidos,
+             SUM(P.Precio * DV.Cantidad) AS TotalComprado
+      FROM Clientes C
+      JOIN Ventas V ON C.IdCliente = V.IdCliente
+      JOIN DetalleVentas DV ON V.IdVenta = DV.IdVenta
+      JOIN Productos P ON DV.IdProducto = P.IdProducto
+      GROUP BY C.Nombres, C.Apellidos
+      ORDER BY TotalComprado DESC;</pre>
+        <p class="note">Explicacion: ranking por valor monetario.</p>
+
+        <pre class="code-block">-- Ingresos por mes
+      SELECT MONTH(V.FechaVenta) AS Mes,
+             SUM(P.Precio * DV.Cantidad) AS Ingresos
+      FROM Ventas V
+      JOIN DetalleVentas DV ON V.IdVenta = DV.IdVenta
+      JOIN Productos P ON DV.IdProducto = P.IdProducto
+      GROUP BY MONTH(V.FechaVenta)
+      ORDER BY Mes;</pre>
+        <p class="note">Explicacion: agrega ingresos por mes.</p>
+
+        <pre class="code-block">-- Productos con precio mayor al promedio
+      SELECT *
+      FROM Productos
+      WHERE Precio &gt; (SELECT AVG(Precio) FROM Productos);</pre>
+        <p class="note">Explicacion: subconsulta con promedio.</p>
+
+        <pre class="code-block">-- Empleado con mas ventas
+      SELECT TOP 1 E.Nombres, E.Apellidos,
+             COUNT(V.IdVenta) AS TotalVentas
+      FROM Empleados E
+      JOIN Ventas V ON E.IdEmpleado = V.IdEmpleado
+      GROUP BY E.Nombres, E.Apellidos
+      ORDER BY TotalVentas DESC;</pre>
+        <p class="note">Explicacion: top 1 por conteo de ventas.</p>
+
+        <pre class="code-block">-- Productos vendidos mas de 5 veces
+      SELECT P.NombreProducto,
+             SUM(DV.Cantidad) AS TotalVendido
+      FROM Productos P
+      JOIN DetalleVentas DV ON P.IdProducto = DV.IdProducto
+      GROUP BY P.NombreProducto
+      HAVING SUM(DV.Cantidad) &gt; 5;</pre>
+        <p class="note">Explicacion: filtra con HAVING por sumatoria.</p>
+            </div>
+          </section>
   </main>
 
   <footer class="footer">

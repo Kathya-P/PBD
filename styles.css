@@ -165,6 +165,12 @@ body {
   font-size: 0.85rem;
 }
 
+.note {
+  margin: 8px 0 18px;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
 .code-block {
   background: #0f172a;
   color: #fde68a;
