@@ -20,6 +20,7 @@ window.QUESTION_BANK = [
     answerText: "Porque garantiza unicidad, identifica filas y permite relaciones seguras.",
     explanation: "Sin PK es mas facil duplicar registros y fallan relaciones con FKs.",
     hint: "Clave unica, integridad y relaciones."
+  },
   {
     id: 201,
     section: "Practica Consultas",
@@ -169,7 +170,7 @@ window.QUESTION_BANK = [
     answerText: "SELECT P.NombreProducto, SUM(DV.Cantidad) AS TotalVendido\nFROM Productos P\nJOIN DetalleVentas DV ON P.IdProducto = DV.IdProducto\nGROUP BY P.NombreProducto\nHAVING SUM(DV.Cantidad) > 5;",
     hint: "HAVING con SUM."
   }
-  },
+  ,
   {
     id: 3,
     section: "Teoria",
