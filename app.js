@@ -54,7 +54,11 @@ const buildActiveQuestions = () => {
 
   let filtered = [...pool];
   if (section !== "all") {
-    filtered = filtered.filter((q) => q.section === section);
+    if (section === "Practica") {
+      filtered = filtered.filter((q) => q.section === "Practica" || q.section === "Practica Consultas");
+    } else {
+      filtered = filtered.filter((q) => q.section === section);
+    }
   }
   if (topic !== "all") {
     filtered = filtered.filter((q) => q.topic === topic);
@@ -99,7 +103,7 @@ const renderQuestion = () => {
       <span>${question.difficulty}</span>
     </div>`;
 
-  const schemaNote = question.section === "Practica"
+  const schemaNote = question.section.startsWith("Practica")
     ? `<div class="schema-note">${DEFAULT_SCHEMA_NOTE}</div>`
     : "";
 
