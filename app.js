@@ -28,6 +28,8 @@ let activeQuestions = [];
 let currentIndex = 0;
 let answeredMap = {};
 let completedCount = 0;
+let correctCount = 0;
+let incorrectCount = 0;
 let completedByTopic = {};
 
 const normalize = (value) => value.toString().trim().toLowerCase();
@@ -77,6 +79,8 @@ const buildActiveQuestions = () => {
   currentIndex = 0;
   answeredMap = {};
   completedCount = 0;
+  correctCount = 0;
+  incorrectCount = 0;
   completedByTopic = {};
   summary.hidden = true;
   if (studyGuide) {
@@ -173,7 +177,8 @@ const registerAnswer = () => {
     return;
   }
 
-  if (!answeredMap[question.id]) {
+  const isFirstAnswer = !answeredMap[question.id];
+  if (isFirstAnswer) {
     answeredMap[question.id] = true;
     completedCount += 1;
     completedByTopic[question.topic] = (completedByTopic[question.topic] || 0) + 1;
@@ -188,6 +193,11 @@ const registerAnswer = () => {
   } else if (question.type === "tf") {
     isCorrect = (userAnswer === "true") === question.correctAnswer;
     correctText = question.correctAnswer ? "Verdadero" : "Falso";
+  }
+
+  if (isFirstAnswer) {
+    if (isCorrect) correctCount += 1;
+    else incorrectCount += 1;
   }
 
   // Highlight correct/incorrect options
@@ -253,7 +263,16 @@ const goNext = () => {
 
 const showSummary = () => {
   summary.hidden = false;
-  scoreText.textContent = `${completedCount}/${activeQuestions.length}`;
+  const total = activeQuestions.length;
+  const pctCorrect = total ? Math.round((correctCount / total) * 100) : 0;
+  const pctIncorrect = total ? Math.round((incorrectCount / total) * 100) : 0;
+  scoreText.textContent = `${completedCount}/${total}`;
+
+  const correctStat = document.getElementById('correctStat');
+  const incorrectStat = document.getElementById('incorrectStat');
+  if (correctStat) correctStat.textContent = `${correctCount} (${pctCorrect}%)`;
+  if (incorrectStat) incorrectStat.textContent = `${incorrectCount} (${pctIncorrect}%)`;
+
   weakTopics.innerHTML = "";
 
   const totalsByTopic = activeQuestions.reduce((acc, question) => {
