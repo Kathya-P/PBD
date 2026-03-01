@@ -115,6 +115,47 @@
       </div>
     </section>
 
+    <section class="panel" aria-labelledby="pbd-stats-title" id="pbd-stats-panel">
+      <div class="panel-header">
+        <h2 id="pbd-stats-title">Estadísticas</h2>
+      </div>
+      <div class="panel-body">
+        <div class="pbd-stats-grid">
+          <div class="pbd-stat-item">
+            <span class="pbd-stat-value" id="pbd-stat-total">0</span>
+            <span class="pbd-stat-label">Total</span>
+          </div>
+          <div class="pbd-stat-item">
+            <span class="pbd-stat-value" id="pbd-stat-reviewed">0</span>
+            <span class="pbd-stat-label">Revisadas</span>
+          </div>
+          <div class="pbd-stat-item pbd-stat-item--correct">
+            <span class="pbd-stat-value" id="pbd-stat-correct">0</span>
+            <span class="pbd-stat-label">Correctas</span>
+          </div>
+          <div class="pbd-stat-item pbd-stat-item--incorrect">
+            <span class="pbd-stat-value" id="pbd-stat-incorrect">0</span>
+            <span class="pbd-stat-label">Incorrectas</span>
+          </div>
+          <div class="pbd-stat-item pbd-stat-item--accuracy">
+            <span class="pbd-stat-value" id="pbd-stat-accuracy">&mdash;</span>
+            <span class="pbd-stat-label">Precisión</span>
+          </div>
+        </div>
+        <div class="pbd-stats-bar-wrap">
+          <div class="pbd-stats-bar">
+            <div id="pbd-stats-bar-correct" class="pbd-stats-bar-correct"></div>
+            <div id="pbd-stats-bar-incorrect" class="pbd-stats-bar-incorrect"></div>
+          </div>
+          <div class="pbd-stats-bar-legend">
+            <span class="pbd-legend-dot pbd-legend-dot--correct"></span> Correctas
+            <span class="pbd-legend-dot pbd-legend-dot--incorrect"></span> Incorrectas
+          </div>
+        </div>
+        <div id="pbd-stats-by-topic" class="pbd-stats-by-topic"></div>
+      </div>
+    </section>
+
 
   </main>
 
