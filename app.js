@@ -127,10 +127,24 @@ const renderQuestion = () => {
     : "";
 
   let inputBlock = "";
-  if (question.type === "input") {
-    inputBlock = `<input class="input-answer" type="text" id="textAnswer" placeholder="Escribe tu respuesta" autocomplete="off" />`;
-  } else if (question.type === "task") {
-    inputBlock = `<textarea class="input-answer" id="textAnswer" rows="6" placeholder="Escribe tu solucion o notas (SQL, pasos, etc.)"></textarea>`;
+  if (question.type === "choice") {
+    inputBlock = `<div class="options-list">${question.options.map((opt, i) => `
+      <label class="option-label">
+        <input type="radio" name="answer" value="${i}" />
+        <span>${opt}</span>
+      </label>`).join("")}
+    </div>`;
+  } else if (question.type === "tf") {
+    inputBlock = `<div class="options-list">
+      <label class="option-label">
+        <input type="radio" name="answer" value="true" />
+        <span>Verdadero</span>
+      </label>
+      <label class="option-label">
+        <input type="radio" name="answer" value="false" />
+        <span>Falso</span>
+      </label>
+    </div>`;
   }
 
   questionCard.innerHTML = `
@@ -144,17 +158,17 @@ const renderQuestion = () => {
 };
 
 const getUserAnswer = () => {
-  const input = document.getElementById("textAnswer");
-  return input ? input.value : "";
+  const selected = document.querySelector('input[name="answer"]:checked');
+  return selected ? selected.value : "";
 };
 
 const registerAnswer = () => {
   const question = activeQuestions[currentIndex];
   const userAnswer = getUserAnswer();
 
-  if (!userAnswer.trim()) {
+  if (!userAnswer) {
     feedback.className = "feedback error";
-    feedback.textContent = "Escribe algo antes de revisar.";
+    feedback.textContent = "Selecciona una opcion antes de revisar.";
     feedback.style.display = "block";
     return;
   }
@@ -165,23 +179,37 @@ const registerAnswer = () => {
     completedByTopic[question.topic] = (completedByTopic[question.topic] || 0) + 1;
   }
 
-  const answerPool = Array.isArray(question.answer)
-    ? question.answer
-    : question.answerText
-      ? [question.answerText]
-      : [];
-
-  const hasAutoCheck = answerPool.length > 0;
   let isCorrect = false;
+  let correctText = "";
 
-  if (hasAutoCheck) {
-    isCorrect = answerPool.map(normalize).includes(normalize(userAnswer));
+  if (question.type === "choice") {
+    isCorrect = parseInt(userAnswer) === question.correctAnswer;
+    correctText = question.options[question.correctAnswer];
+  } else if (question.type === "tf") {
+    isCorrect = (userAnswer === "true") === question.correctAnswer;
+    correctText = question.correctAnswer ? "Verdadero" : "Falso";
   }
+
+  // Highlight correct/incorrect options
+  document.querySelectorAll('.option-label').forEach((label, i) => {
+    const radio = label.querySelector('input[type="radio"]');
+    if (question.type === "choice") {
+      if (i === question.correctAnswer) label.classList.add('correct');
+      else if (radio.checked && !isCorrect) label.classList.add('incorrect');
+    } else {
+      const val = radio.value === "true";
+      if (val === question.correctAnswer) label.classList.add('correct');
+      else if (radio.checked && !isCorrect) label.classList.add('incorrect');
+    }
+    radio.disabled = true;
+  });
+
+  const explanationText = question.explanation ? `<br /><small>${question.explanation}</small>` : "";
 
   feedback.className = `feedback ${isCorrect ? "success" : "error"}`;
   feedback.innerHTML = `
-    <strong>${isCorrect ? "Correcta" : "Incorrecta"}</strong><br />
-    <span>Respuesta correcta: ${question.answerText || answerPool[0] || "No hay respuesta registrada."}</span>
+    <strong>${isCorrect ? "Correcta!" : "Incorrecta"}</strong><br />
+    <span>Respuesta: ${correctText}</span>${explanationText}
   `;
 
   feedback.style.display = "block";
@@ -190,8 +218,25 @@ const registerAnswer = () => {
 
 const showAnswer = () => {
   const question = activeQuestions[currentIndex];
-  const answer = question.answerText || question.answer || "Sin respuesta registrada.";
+  let answer = "";
+  if (question.type === "choice") {
+    answer = question.options[question.correctAnswer];
+  } else if (question.type === "tf") {
+    answer = question.correctAnswer ? "Verdadero" : "Falso";
+  }
   const explanation = question.explanation ? `<br /><small>${question.explanation}</small>` : "";
+
+  // Highlight correct option
+  document.querySelectorAll('.option-label').forEach((label, i) => {
+    const radio = label.querySelector('input[type="radio"]');
+    if (question.type === "choice") {
+      if (i === question.correctAnswer) label.classList.add('correct');
+    } else {
+      if ((radio.value === "true") === question.correctAnswer) label.classList.add('correct');
+    }
+    radio.disabled = true;
+  });
+
   feedback.className = "feedback answer";
   feedback.innerHTML = `<strong>Respuesta correcta</strong><br /><span>${answer}</span>${explanation}`;
   feedback.style.display = "block";
